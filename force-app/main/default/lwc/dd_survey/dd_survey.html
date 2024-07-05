@@ -1,0 +1,55 @@
+<template>
+    <lightning-card title="Survey Suggestions" icon-name="custom:custom63" class="main-card">
+        <div class="slds-m-around_medium" style="width: 40%;">
+            <lightning-input label="Event Name" value={eventName} onchange={handleEventNameChange} class="event-input">
+            </lightning-input>
+            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey</button>
+            <template if:true={isLoading}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </div>
+		<template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+        <template if:true={surveyQuestions.length}>
+            <div class="slds-m-around_medium">
+                <div class="">
+                    <button onclick={handleEditForm} class="slds-m-top_medium edit-btn generate-btn">
+                         &#9998;
+                    </button>
+                </div>
+                <div class="survey-card">
+					<h1>Survey Questions</h1>
+					<template for:each={surveyQuestions} for:item="question">
+                        <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
+                            <h1 class="slds-text-heading_medium">{question.question}  <button onclick={handleEditForm} class="slds-m-top_medium edit-btn ">
+								&#9998;
+						   </button>
+						</h1>
+                            <template if:true={question.radioType}>
+                                <lightning-radio-group options={question.options}></lightning-radio-group>
+                            </template>
+                            <template if:true={question.multiSelectType}>
+                                <lightning-combobox name="progress" value={value} placeholder="Select Option"
+                                    options={question.options} onchange={handleChange}>
+                                </lightning-combobox>
+                            </template>
+                            <template if:true={question.numberType}>
+                                <lightning-input type="number" label="Rate" min="1" max="10"></lightning-input>
+                            </template>
+                            <template if:true={question.textType}>
+                                <lightning-input type="text" label="Your answer"></lightning-input>
+                            </template>
+                        </div>
+                    </template>
+                    <template if:true={error}>
+                        <p class="error-message">{error}</p>
+                    </template>
+                    <lightning-button label="Submit Survey" onclick={handleSubmit}></lightning-button>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

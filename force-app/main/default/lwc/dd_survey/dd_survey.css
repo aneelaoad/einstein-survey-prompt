@@ -1,0 +1,75 @@
+.slds-card.main-card {
+    border: 2px solid #1d9ed0;
+    border-radius: 8px;
+}
+
+.slds-card.survey-card {
+    border: 1px solid #d95797;
+    border-radius: 8px;
+}
+
+.slds-m-around_medium {
+    margin: 1rem;
+}
+
+.slds-box {
+    border: 1px solid #1d9ed0;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.slds-text-heading_medium {
+    color: #1d9ed0;
+}
+
+.sbds-button {
+    background-color: #d95797;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.sbds-button:hover {
+    background-color: #c05085;
+}
+
+.event-input {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.generate-btn {
+    background-color: #1d9ed0;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.generate-btn:hover {
+    background-color: #1878a2;
+}
+
+.slds-button {
+    background-color: #1d9ed0;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: block;
+    margin: 1rem auto 0;
+}
+
+.slds-button:hover {
+    background-color: #1878a2;
+}
+
+.error-message {
+    color: #d95797;
+    font-weight: bold;
+    text-align: center;
+}
