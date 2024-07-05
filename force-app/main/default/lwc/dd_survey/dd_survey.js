@@ -11,6 +11,8 @@ export default class DdSurvey extends LightningElement {
     radioType = false;
     numberType = false;
     isLoading =false
+    @track isModalOpen = false;
+    @track modalQuestion = {};
     handleEventNameChange(event) {
         this.eventName = event.target.value;
     }
@@ -70,7 +72,36 @@ export default class DdSurvey extends LightningElement {
         this.isLoading = false; // Stop loader
     }
 }
-    handleSubmit() {
-        // Implement your submit logic here
-    }
+
+handleEditClick(event) {
+    console.log('clicked');
+    const questionId = event.target.dataset.questionid;
+    this.modalQuestion = this.surveyQuestions.find(question => question.id === parseInt(questionId));
+
+    console.log('question selected: ', this.modalQuestion);
+    this.isModalOpen = true;
+}
+
+handleModalQuestionChange(event) {
+    this.modalQuestion.question = event.target.value;
+}
+
+handleModalOptionsChange(event) {
+    const options = event.target.value.split(',').map(option => ({ label: option.trim(), value: option.trim() }));
+    this.modalQuestion.options = options;
+}
+
+handleSaveModal() {
+    const index = this.surveyQuestions.findIndex(question => question.id === this.modalQuestion.id);
+    this.surveyQuestions[index] = { ...this.modalQuestion };
+    this.isModalOpen = false;
+}
+
+closeModal() {
+    this.isModalOpen = false;
+}
+
+handleSubmit() {
+    // Handle survey submission
+}
 }

@@ -24,7 +24,7 @@
 					<h1>Survey Questions</h1>
 					<template for:each={surveyQuestions} for:item="question">
                         <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
-                            <h1 class="slds-text-heading_medium">{question.question}  <button onclick={handleEditForm} class="slds-m-top_medium edit-btn ">
+                            <h1 class="slds-text-heading_medium">{question.question}  <button onclick={handleEditClick} class="slds-m-top_medium edit-btn " data-questionid={question.id}>
 								&#9998;
 						   </button>
 						</h1>
@@ -50,6 +50,33 @@
                     <lightning-button label="Submit Survey" onclick={handleSubmit}></lightning-button>
                 </div>
             </div>
+        </template>
+
+
+
+		<template if:true={isModalOpen}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium">Edit Question</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-input label="Edit Question" value={modalQuestion.question} data-id={modalQuestion.id} onchange={handleModalQuestionChange}></lightning-input>
+                        <template if:true={modalQuestion.radioType}>
+                            <lightning-textarea label="Edit Options (comma separated)" value={modalQuestion.options} data-id={modalQuestion.id} onchange={handleModalOptionsChange}></lightning-textarea>
+                        </template>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
+                        <lightning-button variant="brand" label="Save" onclick={handleSaveModal}></lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
         </template>
     </lightning-card>
 </template>
