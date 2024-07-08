@@ -1,40 +1,23 @@
 <template>
     <lightning-card title="Survey Suggestions" icon-name="custom:custom63" class="main-card">
-        <div class="slds-m-around_medium" style="width: 40%;">
-            <lightning-input label="Event Name" value={eventName} onchange={handleEventNameChange} class="event-input">
-            </lightning-input>
-            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey</button>
-            <template if:true={isLoading}>
-                <div class="slds-m-top_medium">
-                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-                </div>
-            </template>
+        <div class="slds-m-around_medium input-container">
+            <lightning-input label="Event Name" value={eventName} onchange={handleEventNameChange} class="event-input"></lightning-input>
+            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey </button>
         </div>
-		<template if:true={isLoading}>
-            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium" class="loader"></lightning-spinner>
         </template>
         <template if:true={surveyQuestions.length}>
-            <div class="slds-m-around_medium">
-                <div class="">
-                    <button onclick={handleEditForm} class="slds-m-top_medium edit-btn generate-btn">
-                         &#9998;
-                    </button>
-                </div>
-                <div class="survey-card">
-					<h1>Survey Questions</h1>
-					<template for:each={surveyQuestions} for:item="question">
+            <div class="slds-m-around_medium questions-container">
+                <lightning-card title="Survey Questions" class="survey-card">
+                    <template for:each={surveyQuestions} for:item="question">
                         <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
-                            <h1 class="slds-text-heading_medium">{question.question}  <button onclick={handleEditClick} class="slds-m-top_medium edit-btn " data-questionid={question.id}>
-								&#9998;
-						   </button>
-						</h1>
+                            <h1 class="slds-text-heading_medium">{question.question}</h1>
                             <template if:true={question.radioType}>
                                 <lightning-radio-group options={question.options}></lightning-radio-group>
                             </template>
                             <template if:true={question.multiSelectType}>
-                                <lightning-combobox name="progress" value={value} placeholder="Select Option"
-                                    options={question.options} onchange={handleChange}>
-                                </lightning-combobox>
+                                <lightning-combobox name="progress" value={value} placeholder="Select Option" options={question.options} onchange={handleChange}></lightning-combobox>
                             </template>
                             <template if:true={question.numberType}>
                                 <lightning-input type="number" label="Rate" min="1" max="10"></lightning-input>
@@ -42,19 +25,18 @@
                             <template if:true={question.textType}>
                                 <lightning-input type="text" label="Your answer"></lightning-input>
                             </template>
+                            <button data-questionid={question.id} onclick={handleEditClick} class="edit-btn">&#9998;</button>
                         </div>
                     </template>
-                    <template if:true={error}>
-                        <p class="error-message">{error}</p>
-                    </template>
-                    <lightning-button label="Submit Survey" onclick={handleSubmit}></lightning-button>
-                </div>
+                    <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button>
+                </lightning-card>
             </div>
         </template>
-
-
-
-		<template if:true={isModalOpen}>
+        <template if:true={error}>
+            <p class="error-message">{error}</p>
+        </template>
+        
+        <template if:true={isModalOpen}>
             <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
                 <div class="slds-modal__container">
                     <header class="slds-modal__header">
@@ -65,10 +47,8 @@
                         <h2 class="slds-text-heading_medium">Edit Question</h2>
                     </header>
                     <div class="slds-modal__content slds-p-around_medium">
-                        <lightning-input label="Edit Question" value={modalQuestion.question} data-id={modalQuestion.id} onchange={handleModalQuestionChange}></lightning-input>
-                        <template if:true={modalQuestion.radioType}>
-                            <lightning-textarea label="Edit Options (comma separated)" value={modalQuestion.options} data-id={modalQuestion.id} onchange={handleModalOptionsChange}></lightning-textarea>
-                        </template>
+                        <lightning-input label="Edit Question" value={modalQuestion.question} onchange={handleModalQuestionChange}></lightning-input>
+                        <lightning-input label="Edit Options (comma separated)" value={modalOptions} onchange={handleModalOptionsChange}></lightning-input>
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
