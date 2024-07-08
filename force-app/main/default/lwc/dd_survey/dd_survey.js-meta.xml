@@ -4,6 +4,6 @@
 	<isExposed>true</isExposed>
 	<masterLabel>Survey - Dubai Dreamin</masterLabel>
 	<targets>
-		<target>lightning__HomePage</target>
+		<target>lightning__AppPage</target>
 	</targets>
 </LightningComponentBundle>

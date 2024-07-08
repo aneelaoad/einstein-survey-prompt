@@ -12,7 +12,10 @@
                 <lightning-card title="Survey Questions" class="survey-card">
                     <template for:each={surveyQuestions} for:item="question">
                         <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
+                            <div class="question-header">
                             <h1 class="slds-text-heading_medium">{question.question}</h1>
+                            <button data-questionid={question.id} onclick={handleEditClick} class="edit-btn">&#9998; </button>
+                            </div>
                             <template if:true={question.radioType}>
                                 <lightning-radio-group options={question.options}></lightning-radio-group>
                             </template>
@@ -25,7 +28,6 @@
                             <template if:true={question.textType}>
                                 <lightning-input type="text" label="Your answer"></lightning-input>
                             </template>
-                            <button data-questionid={question.id} onclick={handleEditClick} class="edit-btn">&#9998;</button>
                         </div>
                     </template>
                     <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button>
