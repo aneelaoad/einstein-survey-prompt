@@ -2,26 +2,30 @@ import { LightningElement, track } from 'lwc';
 import promptGenerations from '@salesforce/apex/SurveyController.promptGenerations';
 
 export default class DdSurvey extends LightningElement {
-    @track eventName = 'Dubai Dreamin';
-    @track surveyQuestions = [];
-    @track error;
-    @track isLoading = false;
-    @track isModalOpen = false;
-    @track modalQuestion = {};
-    @track modalOptions = '';
+   eventName = 'Dubai Dreamin';
+   questionsQuantity;
+   surveyQuestions = [];
+   visibleQuestions = [];
+   error;
+   isLoading = false;
+   isModalOpen = false;
+   modalQuestion = {};
+   modalOptions = '';
+   currentPage = 1;
+   totalPages = 1;
 
-    textType = false;
-    multiSelectType = false;
-    radioType = false;
-    numberType = false;
+    pageSize = 2;
 
     handleEventNameChange(event) {
         this.eventName = event.target.value;
     }
+    handleQuestionQuantityChange(event) {
+        this.questionsQuantity = event.target.value;
+    }
 
     async handleGenerateSurvey() {
         this.isLoading = true; // Start loader
-        const prompt = `Generate a JSON list of survey questions for the ${this.eventName} event. 
+        const prompt = `Generate a JSON list of ${this.questionsQuantity} survey questions for the ${this.eventName} event. 
         The response, called surveyQuestions, should include the following details:
         - Question
         - Id
@@ -38,12 +42,34 @@ export default class DdSurvey extends LightningElement {
                     question.options = question.options.map(option => ({ label: option, value: option }));
                 }
             });
+            this.totalPages = Math.ceil(this.surveyQuestions.length / this.pageSize);
+            this.updateVisibleQuestions();
             console.log('questions : ', JSON.stringify(this.surveyQuestions));
         } catch (error) {
             this.error = 'Error generating survey: ' + error.body.message;
             console.error('Error generating survey:', error);
         } finally {
             this.isLoading = false; // Stop loader
+        }
+    }
+
+    updateVisibleQuestions() {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.visibleQuestions = this.surveyQuestions.slice(startIndex, endIndex);
+    }
+
+    handlePreviousPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.updateVisibleQuestions();
+        }
+    }
+
+    handleNextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.updateVisibleQuestions();
         }
     }
 
@@ -74,6 +100,7 @@ export default class DdSurvey extends LightningElement {
         if (index !== -1) {
             this.surveyQuestions[index] = { ...this.modalQuestion };
         }
+        this.updateVisibleQuestions();
         this.closeModal();
     }
 

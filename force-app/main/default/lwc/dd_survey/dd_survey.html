@@ -2,7 +2,8 @@
     <lightning-card title="Survey Suggestions" icon-name="custom:custom63" class="main-card">
         <div class="slds-m-around_medium input-container">
             <lightning-input label="Event Name" value={eventName} onchange={handleEventNameChange} class="event-input"></lightning-input>
-            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey </button>
+            <lightning-input label="Number of questions?" value={questionsQuantity} onchange={handleQuestionQuantityChange} class="event-input"></lightning-input>
+            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey</button>
         </div>
         <template if:true={isLoading}>
             <lightning-spinner alternative-text="Loading" size="medium" class="loader"></lightning-spinner>
@@ -10,11 +11,11 @@
         <template if:true={surveyQuestions.length}>
             <div class="slds-m-around_medium questions-container">
                 <lightning-card title="Survey Questions" class="survey-card">
-                    <template for:each={surveyQuestions} for:item="question">
+                    <template for:each={visibleQuestions} for:item="question">
                         <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
                             <div class="question-header">
-                            <h1 class="slds-text-heading_medium">{question.question}</h1>
-                            <button data-questionid={question.id} onclick={handleEditClick} class="edit-btn">&#9998; </button>
+                                <h1 class="slds-text-heading_medium">{question.id}. {question.question}</h1>
+                                <button data-questionid={question.id} onclick={handleEditClick} class="edit-btn">&#9998;</button>
                             </div>
                             <template if:true={question.radioType}>
                                 <lightning-radio-group options={question.options}></lightning-radio-group>
@@ -30,6 +31,11 @@
                             </template>
                         </div>
                     </template>
+                    <div class="pagination-container">
+                        <button class="pagination-btn" onclick={handlePreviousPage}>Previous</button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <button class="pagination-btn" onclick={handleNextPage} >Next</button>
+                    </div>
                     <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button>
                 </lightning-card>
             </div>
