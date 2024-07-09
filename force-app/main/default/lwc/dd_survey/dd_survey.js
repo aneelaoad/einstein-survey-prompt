@@ -1,31 +1,61 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, wire } from 'lwc';
 import promptGenerations from '@salesforce/apex/SurveyController.promptGenerations';
+import getEvents from '@salesforce/apex/EventController.getEvents';
 
 export default class DdSurvey extends LightningElement {
-   eventName = 'Dubai Dreamin';
-   questionsQuantity;
-   surveyQuestions = [];
-   visibleQuestions = [];
-   error;
-   isLoading = false;
-   isModalOpen = false;
-   modalQuestion = {};
-   modalOptions = '';
-   currentPage = 1;
-   totalPages = 1;
+    eventName = 'Dubai Dreamin';
+    selectedEvent;
+    surveyQuestions = [];
+    visibleQuestions = [];
+    error;
+    isLoading = false;
+    showGenerateSurveyPage = false
+    isModalOpen = false;
+    modalQuestion = {};
+    currentPage = 1;
+    totalPages = 1;
 
     pageSize = 2;
+     eventOptions = [];
+
+
+
+ @wire(getEvents)
+    wiredEvents({ error, data }) {
+        if (data) {
+            this.eventData = data
+            this.eventOptions = data.map(event => {
+                return { 
+                    label: event.Name, 
+                    // value: event.Id 
+                    value: event.Name 
+                };
+            });
+        
+            console.log(' eventData :',  JSON.stringify(this.eventData ));
+        
+
+
+        } else if (error) {
+            console.error('Error fetching events:', error);
+        }
+    }
 
     handleEventNameChange(event) {
         this.eventName = event.target.value;
+      
+        console.log('eventName : ',this.eventName);
+            console.log(' eventData :',  JSON.stringify(this.eventData ));
+        this.selectedEvent = this.eventData.find(event => event.Name === this.eventName);
+          console.log('selectedEvent : ',this.selectedEvent);
+       this.showGenerateSurveyPage= true
     }
-    handleQuestionQuantityChange(event) {
-        this.questionsQuantity = event.target.value;
-    }
+
+
 
     async handleGenerateSurvey() {
         this.isLoading = true; // Start loader
-        const prompt = `Generate a JSON list of ${this.questionsQuantity} survey questions for the ${this.eventName} event. 
+        const prompt = `Generate a JSON list of  survey questions for the ${this.eventName} event. 
         The response, called surveyQuestions, should include the following details:
         - Question
         - Id
@@ -65,20 +95,17 @@ export default class DdSurvey extends LightningElement {
             this.updateVisibleQuestions();
         }
     }
-
     handleNextPage() {
         if (this.currentPage < this.totalPages) {
             this.currentPage++;
             this.updateVisibleQuestions();
         }
+       
     }
 
     handleEditClick(event) {
-        console.log('clicked');
         const questionId = event.target.dataset.questionid;
-        this.modalQuestion = this.surveyQuestions.find(question => question.id === parseInt(questionId));
-        this.modalOptions = this.modalQuestion.options ? this.modalQuestion.options.map(option => option.label).join(', ') : '';
-        console.log('question selected: ', JSON.stringify(this.modalQuestion));
+        this.modalQuestion = JSON.parse(JSON.stringify(this.surveyQuestions.find(question => question.id === parseInt(questionId))));
         this.isModalOpen = true;
     }
 
@@ -86,16 +113,12 @@ export default class DdSurvey extends LightningElement {
         this.modalQuestion.question = event.target.value;
     }
 
-    handleModalOptionsChange(event) {
-        this.modalOptions = event.target.value;
+    handleModalOptionChange(event) {
+        const index = event.target.dataset.index;
+        this.modalQuestion.options[index].label = event.target.value;
     }
 
     handleSaveModal() {
-        if (this.modalOptions) {
-            this.modalQuestion.options = this.modalOptions.split(',').map(option => ({ label: option.trim(), value: option.trim() }));
-        } else {
-            this.modalQuestion.options = [];
-        }
         const index = this.surveyQuestions.findIndex(question => question.id === this.modalQuestion.id);
         if (index !== -1) {
             this.surveyQuestions[index] = { ...this.modalQuestion };

@@ -1,16 +1,34 @@
 <template>
-    <lightning-card title="Survey Suggestions" icon-name="custom:custom63" class="main-card">
-        <div class="slds-m-around_medium input-container">
-            <lightning-input label="Event Name" value={eventName} onchange={handleEventNameChange} class="event-input"></lightning-input>
-            <lightning-input label="Number of questions?" value={questionsQuantity} onchange={handleQuestionQuantityChange} class="event-input"></lightning-input>
-            <button onclick={handleGenerateSurvey} class="slds-m-top_medium generate-btn">Generate Survey</button>
-        </div>
-        <template if:true={isLoading}>
-            <lightning-spinner alternative-text="Loading" size="medium" class="loader"></lightning-spinner>
+    <div  class="main-card">
+
+        <template if:false={showGenerateSurveyPage}>
+            <div class="event-list">
+            <lightning-combobox
+                name="Events"
+                label="Event List"
+                value={value}
+                placeholder="Select Event"
+                options={eventOptions}
+                onchange={handleEventNameChange}
+                class="styled-combobox "
+                 ></lightning-combobox>
+                </div>
         </template>
+        <template if:true={showGenerateSurveyPage}>
+        <div class="custom-card">
+            <h1 class="event-name">{selectedEvent.Name}</h1>
+            <img src={selectedEvent.Logo_Url__c} alt="Event Logo" class="event-logo"/>
+            <button onclick={handleGenerateSurvey} class="generate-btn">Generate Survey</button>
+          
+        </div>
+    </template>
+         <template if:true={isLoading}>
+                <!-- <div class="custom-loader"></div> -->
+                  <lightning-spinner alternative-text="Loading" size="medium" class="loader"></lightning-spinner>
+            </template>
         <template if:true={surveyQuestions.length}>
             <div class="slds-m-around_medium questions-container">
-                <lightning-card title="Survey Questions" class="survey-card">
+                <div title="Survey Questions" class="survey-card">
                     <template for:each={visibleQuestions} for:item="question">
                         <div class="question-card slds-box slds-m-bottom_small" key={question.id}>
                             <div class="question-header">
@@ -32,18 +50,18 @@
                         </div>
                     </template>
                     <div class="pagination-container">
-                        <button class="pagination-btn" onclick={handlePreviousPage}>Previous</button>
+                        <button class="pagination-btn" onclick={handlePreviousPage} >Prev</button>
                         <span>Page {currentPage} of {totalPages}</span>
-                        <button class="pagination-btn" onclick={handleNextPage} >Next</button>
+                        <button class="pagination-btn" onclick={handleNextPage}  >Next</button>
                     </div>
-                    <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button>
-                </lightning-card>
+                    <!-- <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button> -->
+                </div>
             </div>
         </template>
         <template if:true={error}>
             <p class="error-message">{error}</p>
         </template>
-        
+
         <template if:true={isModalOpen}>
             <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
                 <div class="slds-modal__container">
@@ -56,7 +74,12 @@
                     </header>
                     <div class="slds-modal__content slds-p-around_medium">
                         <lightning-input label="Edit Question" value={modalQuestion.question} onchange={handleModalQuestionChange}></lightning-input>
-                        <lightning-input label="Edit Options (comma separated)" value={modalOptions} onchange={handleModalOptionsChange}></lightning-input>
+
+                        <template if:true={modalQuestion.options}>
+                            <template for:each={modalQuestion.options} for:item="option" for:index="index">
+                                <lightning-input label={option.label} value={option.label} data-index={index} onchange={handleModalOptionChange} key={option.label}></lightning-input>
+                            </template>
+                        </template>
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
@@ -66,5 +89,5 @@
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
         </template>
-    </lightning-card>
+    </div>
 </template>
