@@ -19,6 +19,13 @@ export default class DdSurvey extends LightningElement {
      eventOptions = [];
 
 
+     get isFirstPage() {
+        return this.currentPage === 1;
+    }
+
+    get isLastPage() {
+        return this.currentPage === this.totalPages;
+    }
 
  @wire(getEvents)
     wiredEvents({ error, data }) {
@@ -55,7 +62,7 @@ export default class DdSurvey extends LightningElement {
 
     async handleGenerateSurvey() {
         this.isLoading = true; // Start loader
-        const prompt = `Generate a JSON list of  survey questions for the ${this.eventName} event. 
+        const prompt = `Generate a JSON list of 6 survey questions for the ${this.eventName} event. 
         The response, called surveyQuestions, should include the following details:
         - Question
         - Id
@@ -106,6 +113,12 @@ export default class DdSurvey extends LightningElement {
     handleEditClick(event) {
         const questionId = event.target.dataset.questionid;
         this.modalQuestion = JSON.parse(JSON.stringify(this.surveyQuestions.find(question => question.id === parseInt(questionId))));
+        let qq = JSON.parse(JSON.stringify(this.surveyQuestions.find(question => question.id === parseInt(questionId))));
+         qq.options.forEach((option, index) => {
+            option.id = index + 1;
+        });
+        console.log('qq : ',JSON.stringify(qq));
+         this.modalQuestion= qq
         this.isModalOpen = true;
     }
 

@@ -156,7 +156,16 @@ input{
 .pagination-btn:hover:not(:disabled) {
     background-color: #094d74;
 }
-
+.question-option{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+.question-option input{
+    border: 1px solid #0c7eaa !important;
+    margin: 3px 0;
+    padding: 5px ;
+}
 .custom-card {
     background-color: white;
     border: 1px solid #d8dde6;

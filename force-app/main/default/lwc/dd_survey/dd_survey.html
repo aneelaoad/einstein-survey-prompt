@@ -50,9 +50,9 @@
                         </div>
                     </template>
                     <div class="pagination-container">
-                        <button class="pagination-btn" onclick={handlePreviousPage} >Prev</button>
+                        <button class="pagination-btn" onclick={handlePreviousPage} disabled={isFirstPage} >Prev</button>
                         <span>Page {currentPage} of {totalPages}</span>
-                        <button class="pagination-btn" onclick={handleNextPage}  >Next</button>
+                        <button class="pagination-btn" onclick={handleNextPage} disabled={isLastPage} >Next</button>
                     </div>
                     <!-- <lightning-button label="Submit Survey" onclick={handleSubmit} class="submit-btn"></lightning-button> -->
                 </div>
@@ -77,7 +77,10 @@
 
                         <template if:true={modalQuestion.options}>
                             <template for:each={modalQuestion.options} for:item="option" for:index="index">
-                                <lightning-input label={option.label} value={option.label} data-index={index} onchange={handleModalOptionChange} key={option.label}></lightning-input>
+                                <div key={option.id} class="question-option">
+                                    <label> Option {option.id}</label>
+                                <input value={option.label} data-index={index} onchange={handleModalOptionChange} ></input>
+                                </div>
                             </template>
                         </template>
                     </div>
